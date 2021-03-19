@@ -1,0 +1,44 @@
+---
+- name: Running a Webserver Workflow
+  hosts: webserver1
+  become: true
+  tasks: 
+
+  - name: Installing Packages HTTPD and Firewalld
+    dnf: 
+      name: "{{ item }}"
+      state: latest
+    loop: 
+    - httpd
+    - firewalld
+
+  - name: Copying index.html
+    copy:
+      src: index.html
+      dest: /var/www/html/
+    notify: restart_webservice
+
+  - name: Starting and Enabling Service HTTPD and Firewalld
+    service: 
+      name: "{{ item }}"
+      state: started
+      enabled: true
+    loop: 
+    - httpd
+    - firewalld
+
+  - name: Adding Web Service Port in Firewalld
+    firewalld:
+      service: http
+      state: enabled
+      immediate: true
+      permanent: true
+
+  handlers:
+
+  - name: restart_webservice
+    service: 
+      name: httpd
+      state: restarted
+      enabled: true
+...
