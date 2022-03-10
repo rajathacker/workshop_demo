@@ -1,6 +1,6 @@
 ---
 - name: Running a Webserver Workflow
-  hosts: webserver2.example.com
+  hosts: all
   become: true
   tasks: 
 
