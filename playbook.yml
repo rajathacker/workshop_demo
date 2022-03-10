@@ -4,19 +4,14 @@
   become: true
   tasks: 
 
-  - name: Installing Packages HTTPD and Firewalld
+  - name: Installing Packages VSFTPD and Firewalld
     dnf: 
       name: "{{ item }}"
       state: latest
     loop: 
-    - httpd
+    - vsftpd
+    - ftp
     - firewalld
-
-  - name: Copying index.html
-    copy:
-      src: index.html
-      dest: /var/www/html/
-    notify: restart_webservice
 
   - name: Starting and Enabling Service HTTPD and Firewalld
     service: 
@@ -24,12 +19,12 @@
       state: started
       enabled: true
     loop: 
-    - httpd
+    - vsftpd
     - firewalld
 
   - name: Adding Web Service Port in Firewalld
     firewalld:
-      service: http
+      service: ftp
       state: enabled
       immediate: true
       permanent: true
